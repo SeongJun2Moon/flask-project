@@ -55,5 +55,3 @@ class Contracts(object):
             else: print("그런거 없음")
 
 Contracts.main()
-
-Contracts.main()
