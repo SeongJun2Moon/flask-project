@@ -17,6 +17,8 @@ BMI 지수에 따른 결과는 다음과 같다.
 홍길동 170 79 정상
 ***************************
 '''
+from util.common import Common
+
 
 class Bmi(object):
     def __init__(self, name, cm, kg) -> None:
@@ -24,7 +26,7 @@ class Bmi(object):
         self.cm = cm
         self.kg = kg
 
-    def print(self):
+    def __str__(self):
         biman = self.kg/(self.cm**2)*10000
         if biman >= 35:
             bmi = "고도비만"
@@ -37,16 +39,20 @@ class Bmi(object):
         elif biman <= 22.9 and biman >= 18.5:
             bmi = "정상"
         else: bmi = "저체중"
-        print(f"***************************\n이름 키(cm) 몸무게(kg) 비만도\n***************************")
-        print(f"{self.name} {self.cm} {self.kg} {bmi}")
-        print("***************************")
+        return f"{self.name} {self.cm} {self.kg} {bmi}"
 
     @staticmethod
-    def main():
+    def new_bmi():
         name = input("이름: ")
         cm = int(input("키: "))
         kg = int(input("몸무게: "))
-        bmi = Bmi(name, cm, kg)
-        bmi.print()
+        return Bmi(name, cm, kg)
 
-Bmi.main()
+    @staticmethod
+    def print_bmi(ls):
+        print("### 비만도 ###\n********************************\n이름 키 몸무게 비만도\n*******************************")
+        [print(i) for i in ls]
+        print("********************************")
+    @staticmethod
+    def delete_bmi(ls, name):
+        del ls[[i for i, j in enumerate(ls) if name == j.name][0]]

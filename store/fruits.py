@@ -10,19 +10,16 @@
 ********************************
 구매할 과일: 바
 """
+from util.common import Common
+
 
 class Fruits(object):
     def __init__(self, name, amount) -> None:
         self.name = name
         self.amount = amount
 
-    def print(self):
-        print(f"{self.name} {self.amount}")
-
-    @staticmethod
-    def print_menu():
-        print("1.과일등록 2.과일조회 3.과일삭제 4.종료")
-        return int(input("메뉴 선택: "))
+    def __str__(self):
+        return f"{self.name} {self.amount}"
 
     @staticmethod
     def new_fruit():
@@ -33,8 +30,7 @@ class Fruits(object):
     @staticmethod
     def print_fruits(ls):
         print("### 과일들 ###\n******************************\n과일 수량\n******************************")
-        for i in ls:
-            i.print()
+        [print(i) for i in ls]
         print("******************************")
 
     @staticmethod
@@ -45,7 +41,7 @@ class Fruits(object):
     def main():
         ls = []
         while True:
-            menu = Fruits.print_menu()
+            menu = Common.print_menu("과일")
             if menu == 1:
                 ls.append(Fruits.new_fruit())
             elif menu == 2:

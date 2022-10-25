@@ -1,13 +1,19 @@
-
+import random
 
 class RandomList(object):
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
+    def get_random(self, start, end, count):
+        return random.sample(range(start, end), count)
+
     def print(self):
-        pass
+        print(self.get_random(1, 100, 10))
 
     @staticmethod
     def main():
-        pass
+        rl = RandomList()
+        rl.print()
+
+RandomList.main()

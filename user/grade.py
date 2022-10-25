@@ -18,6 +18,8 @@
 유관순 90 90 92 272 90.6 A
 ********************************
 """
+from util.common import Common
+
 
 class Grade(object):
     def __init__(self, name, ko, en, ma) -> None:
@@ -26,8 +28,8 @@ class Grade(object):
         self.en = en
         self.ma = ma
 
-    def print(self):
-        print(f"{self.name} {self.ko} {self.en} {self.ma}")
+    def __str__(self):
+        return f"{self.name} {self.ko} {self.en} {self.ma}"
 
     @staticmethod
     def delete_grade(ls, name):
@@ -36,8 +38,7 @@ class Grade(object):
     @staticmethod
     def print_grade(ls):
         print("### 성적표 ###\n********************************\n이름 국어 영어 수학 총점 평균 학점\n*******************************")
-        for i in ls:
-            i.print()
+        [print(i) for i in ls]
         print("********************************")
 
     @staticmethod
@@ -48,26 +49,3 @@ class Grade(object):
         ma = int(input("수학: "))
         print("등록 완료")
         return Grade(name, ko, en, ma)
-
-    @staticmethod
-    def print_menu():
-        print("1.성적등록\n2.성적조회\n3.성적삭제\n4.종료")
-        return int(input("메뉴선택: "))
-
-    @staticmethod
-    def main():
-        lst = []
-        while True:
-            menu = Grade.print_menu()
-            if menu == 1:
-                lst.append(Grade.new_grade())
-            elif menu == 2:
-                Grade.print_grade(lst)
-            elif menu == 3:
-                Grade.delete_grade(lst, input("삭제할 이름: "))
-            elif menu == 4:
-                print("종료")
-                break
-            else: print("그런거 없음")
-
-Grade.main()
