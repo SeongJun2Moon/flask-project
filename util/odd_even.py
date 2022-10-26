@@ -35,5 +35,3 @@ class OddEven(object):
             else: print("그런거 없음")
 
 OddEven.main()
-
-OddEven.main()

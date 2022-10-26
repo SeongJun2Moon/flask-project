@@ -40,7 +40,7 @@ class Dataset(object):
     def id(self): return self._id
 
     @id.setter
-    def id(self, id): self.id = id
+    def id(self, id): self._id = id
 
     @property
     def label(self): return self._label

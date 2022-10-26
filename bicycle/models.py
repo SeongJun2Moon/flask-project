@@ -1,6 +1,6 @@
 from util.dataset import Dataset
 
-class Model(object):
+class BicycleModel(object):
 
     dataset = Dataset()
 

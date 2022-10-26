@@ -5,5 +5,5 @@ class Common(object):
     @staticmethod
     def menu(ls):
         [print(f"{i}:{j}") for i, j in enumerate(ls)]
-        return int(input("메뉴 선택: "))
+        return input("메뉴 선택: ")
 
