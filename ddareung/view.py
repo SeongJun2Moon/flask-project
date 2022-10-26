@@ -1,9 +1,9 @@
-from titanic.model import Model
-
+from ddareung.model import Model
 
 class View(object):
 
     model = Model()
+
     def __init__(self):
         pass
 
