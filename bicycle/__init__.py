@@ -1,4 +1,5 @@
 from bicycle.views import BicycleController
+from bicycle.models import BicycleModel
 from util.common import Common
 
 api = BicycleController()
@@ -8,7 +9,13 @@ while True:
         print(" ### 종료 ### ")
         break
     elif menu == "1":
-        print(" ### 시각화 ### ")
+        print(" 터미널 출력 ")
+        print(BicycleModel())
+        # a = BicycleModel().new_model('train.csv')
+        # print(f"데이터의 타입: {type(a)}")
+        # print(f"데이터의 columns: \n{a.columns}")
+        # print(f"데이터의 head: \n{a.head()}")
+        # print(f"데이터의 null 개수 = \n{a.isnull().sum()}")
     elif menu == "2":
         print(" ### 모델링 ### ")
     elif menu == "3":

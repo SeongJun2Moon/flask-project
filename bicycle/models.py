@@ -1,3 +1,5 @@
+import pandas as pd
+
 from util.dataset import Dataset
 
 class BicycleModel(object):
@@ -8,13 +10,18 @@ class BicycleModel(object):
         pass
 
     def __str__(self):
-        pass
+        a = self.new_model('train.csv')
+        return f"데이터의 타입: {type(a)}"
 
     def preprocess(self):
         pass
 
-    def new_model(self):
-        pass
+    def new_model(self, fname):
+        this = self.dataset
+        this.context = './data/'
+        this.fname = fname
+        df = pd.read_csv(this.context + this.fname)
+        return df
 
     def create_bike(self):
         pass
