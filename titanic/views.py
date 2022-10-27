@@ -19,7 +19,6 @@ class TitanicController(object):
         this.test = model.new_model(test)
         this.id = this.test['PassengerId']
         # columns 편집과정
-
         return this
 
     def modeling(self, train, test) -> object:  # 모델생성
