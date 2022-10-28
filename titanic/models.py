@@ -4,6 +4,12 @@ from util.dataset import Dataset
 """
 ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
         'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
+시각화를 통해 얻은 상관관계 변수(variable = feature = column)는
+Pclass
+Sex
+Age
+Fare
+Embarked
  === null 값 ===
  Age            177
  Cabin          687
@@ -16,7 +22,7 @@ class TitanicModel(object):
     def __init__(self):
         pass
     def __str__(self):
-        b = self.new_model(fname=self.dataset.fname)
+        b = self.new_model(self.dataset.fname)
         return f'Train type: {type(b)}\n' \
                f'Train columns: {b.columns}\n' \
                f'Train head : {b.head()}\n' \
@@ -33,6 +39,7 @@ class TitanicModel(object):
     @staticmethod
     def create_train(this)->object:
         return this.train.drop('Survived', axis = 1)
+
     @staticmethod
     def create_label(this):
         return this.train["Survived"]
@@ -43,6 +50,26 @@ class TitanicModel(object):
             this.train = this.train.drop(i, axis = 1)
             this.test = this.test.drop(i, axis = 1)
         return this
+
+    @staticmethod
+    def pclass(self):
+        pass
+
+    @staticmethod
+    def sex(self):
+        pass
+
+    @staticmethod
+    def age(self):
+        pass
+
+    @staticmethod
+    def fare(self):
+        pass
+
+    @staticmethod
+    def embarked(self):
+        pass
 
 if __name__ == '__main__':
     t = TitanicModel()

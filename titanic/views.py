@@ -12,6 +12,8 @@ class TitanicController(object):
     dataset = Dataset()
     model = TitanicModel()
 
+    def mining(self):
+        pass
     def preprocess(self, train, test) -> object:  # 전처리
         model = self.model
         this = self.dataset
