@@ -53,6 +53,7 @@ class Bmi(object):
         print("### 비만도 ###\n********************************\n이름 키 몸무게 비만도\n*******************************")
         [print(i) for i in ls]
         print("********************************")
+
     @staticmethod
     def delete_bmi(ls, name):
         del ls[[i for i, j in enumerate(ls) if name == j.name][0]]

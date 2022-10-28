@@ -37,7 +37,7 @@ class TitanicModel(object):
         return pd.read_csv(this.context + this.fname)
 
     @staticmethod
-    def create_train(this)->object:
+    def create_train(this) -> object:
         return this.train.drop('Survived', axis = 1)
 
     @staticmethod
@@ -45,32 +45,43 @@ class TitanicModel(object):
         return this.train["Survived"]
 
     @staticmethod
-    def drop_features(this, *feature)->object: # feature 몇 개인지 모르지만
+    def drop_features(this, *feature) -> object: # feature 몇 개인지 모르지만
         for i in feature:
             this.train = this.train.drop(i, axis = 1)
             this.test = this.test.drop(i, axis = 1)
         return this
 
-    @staticmethod
-    def pclass(self):
-        pass
+    # @staticmethod
+    # def pclass_ordinal(this) -> object: # 1,2,3등칸
+    #     train = this.train
+    #     test = this.test
+    #     print(train['Pclass'])
+    #     return this
 
     @staticmethod
-    def sex(self):
-        pass
+    def sex_nominal(this) -> object: # male,female
+        gender_mapping = {"male" : 0, "femail" : 1}
+        for i in [this.train, this.test]:
+            i["Gender"] = i["Sex"].map(gender_mapping)
+
+        return this
 
     @staticmethod
-    def age(self):
-        pass
+    def age_ordinal(this) -> object: # 10대 20대 30대
+        return this
 
     @staticmethod
-    def fare(self):
-        pass
+    def fare_ordinal(this) -> object: # 비싸, 보통, 싸
+        return this
 
     @staticmethod
-    def embarked(self):
-        pass
+    def embarked_nominal(this) -> object: # 승선항구 s,c,q
+        return this
 
-if __name__ == '__main__':
+if __name__ == '__main__': # 테스트용
     t = TitanicModel()
-    print(t)
+    this = t.dataset
+    this.train = t.new_model('train.csv')
+    this.test = t.new_model("test.csv")
+    this = TitanicModel.sex_nominal(this)
+    print(this.train['Gender'].head())

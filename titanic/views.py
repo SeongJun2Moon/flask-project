@@ -21,6 +21,11 @@ class TitanicController(object):
         this.test = model.new_model(test)
         this.id = this.test['PassengerId']
         # columns 편집과정
+        # this = model.pclass_ordinal(this) # 수정없이 순서만 정하면 됨
+        this = model.sex_nominal(this)
+        this = model.age_ordinal(this)
+        this = model.fare_ordinal(this)
+        this = model.embarked_nominal(this) # 내부 스칼라의 props가 바귐
         return this
 
     def modeling(self, train, test) -> object:  # 모델생성
