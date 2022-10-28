@@ -40,3 +40,8 @@ class TitanicController(object):
 
     def submit(self):  # 배포
         pass
+
+if __name__ == '__main__':
+    tc = TitanicController()
+    this = tc.modeling('train.csv',"test.csv")
+    print(this.train)
