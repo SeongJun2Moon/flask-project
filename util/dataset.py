@@ -47,3 +47,9 @@ class Dataset(object):
 
     @label.setter
     def label(self, label): self._label = label
+
+    @property
+    def bike(self): return self._bike
+
+    @bike.setter
+    def bike(self, bike): self._bike = bike

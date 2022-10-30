@@ -99,3 +99,5 @@ if __name__ == '__main__': # 테스트용
     this.test = t.new_model("test.csv")
     this = TitanicModel.age_ordinal(this)
     print(this.train.isnull().sum())
+    # array = np.arange(4) # 튜플 만들기
+    # array = np.random.randint(0,10,(3,3)) # 테이블 만들기
