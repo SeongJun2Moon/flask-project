@@ -30,18 +30,4 @@ if __name__ == '__main__':
             break
         elif menu == "1":
             print(" ### 원본보기 ### ")
-            imge = api.modeling("Lenna.png")
-            print(f"cv2 버전: {cv2.__version__}")
-            img = cv2.imread(imge, cv2.IMREAD_COLOR)
-            print(f'Shape is {img.shape}')
-            cv2.imshow(imge, img)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-
-# if __name__ == '__main__':
-#     print(f"cv2 버전: {cv2.__version__}")
-#     img = cv2.imread(self.modeling(fname), cv2.IMREAD_COLOR)
-#     print(f'Shape is {img.shape}')
-#     cv2.imshow(self.modeling(fname), img)
-#     cv2.waitKey(0)
-#     cv2.destroyAllWindows()
+            df = api.modeling("Lenna.png")
