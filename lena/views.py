@@ -1,10 +1,11 @@
 from util.dataset import Dataset
-from lena.models import LenaModel
+from lena.models import LennaModel
+import cv2
 
-class LenaController(object):
+class LennaController(object):
 
     dataset = Dataset()
-    model = LenaModel()
+    model = LennaModel()
 
     def __init__(self):
         pass
@@ -18,8 +19,9 @@ class LenaController(object):
     def preprocess(self):
         pass
 
-    def modeling(self):
-        pass
+    def modeling(self, fname) -> object:
+        img = self.model.new_model(fname)
+        return img
 
     def learning(self):
         pass
