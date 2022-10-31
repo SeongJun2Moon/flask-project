@@ -26,6 +26,9 @@ class TitanicController(object):
         this = model.age_ordinal(this)
         this = model.fare_ordinal(this)
         this = model.embarked_nominal(this) # 내부 스칼라의 props가 바귐
+        this = model.title_norminal(this)
+        this = model.drop_features(this, "PassengerId", "Name", "Sex", "Age",
+                                   "SibSp", "Parch", "Ticket", "Fare", "Cabin")
         return this
 
     def modeling(self, train, test) -> object:  # 모델생성
@@ -44,4 +47,6 @@ class TitanicController(object):
 if __name__ == '__main__':
     tc = TitanicController()
     this = tc.modeling('train.csv',"test.csv")
-    print(this.train)
+    print(this.train.head(6))
+    print(this.train.columns)
+    print(this.train.isnull)
