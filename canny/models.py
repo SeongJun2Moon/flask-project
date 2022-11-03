@@ -6,19 +6,25 @@ import matplotlib.pyplot as plt
 from const.crawler import HEADERS
 import cv2 as cv
 
+from util.dataset import Dataset
 
-def image_read(fname):
-    return (lambda x : cv.imread('./data/'+ x))(fname)
 
 def Executelambda(*params):
     cmd = params[0]
     target = params[1]
-    if cmd == "IMAGE_READ":
-        return (lambda x : cv.imread('./data/'+ x))(target)
+    ds = Dataset()
+    if cmd == "IMAGE_READ-CV":
+        return (lambda x : cv.imread(ds.context + x))(target)
+    elif cmd == "IMAGE_READ-PLT":
+        return (lambda x : cv.cvtColor(cv.imread(ds.context + x), cv.COLOR_BGR2RGB))(target)
     elif cmd == "gray_scale":
         return (lambda x : x[:, :, 0] * 0.114 + x[:, :, 1] * 0.587 + x[:, :, 2] * 0.229)(target)
+    elif cmd == "URL":
+        res = requests.get(params[1], headers=HEADERS)
+        img = np.array(Image.open(BytesIO(res.content)))
+        return img
     elif cmd == "IMAGE_FROM_ARRAY":
-        pass
+        return (lambda x : Image.fromarray(x))(target)
 
 # class LennaModel(object):
 #
@@ -217,17 +223,10 @@ def Executelambda(*params):
 #             dst[x, y] = (kernel * cornerPixel[x: x + kernel.shape[0], y: y + kernel.shape[1]]).sum() + delta
 #     return dst
 
-def gray_scale(img):
-    dst = img[:, :, 0] * 0.114 + img[:, :, 1] * 0.587 + img[:, :, 2] * 0.229  # GRAYSCALE 변환 공식
-    return dst
-def imshow(img):
-    img = Image.fromarray(img)
-    plt.imshow(img)
-    plt.show()
-
-if __name__ == '__main__':
+# if __name__ == '__main__':
+#     pass
     # img = gray_scale(LennaModel().get())
     # img = GaussianBlur(img, 1, 1).get()
     # img = Canny(img, 50, 150).get()
     # imshow(img)
-    CannyModel().get()
+    # CannyModel().get()

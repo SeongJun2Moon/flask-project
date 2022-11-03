@@ -3,7 +3,7 @@ from PIL import Image
 import cv2 as cv
 import numpy as np
 
-from canny.models import image_read, gray_scale, Executelambda
+from canny.models import Executelambda
 import requests
 from io import BytesIO
 from const.crawler import HEADERS
@@ -28,16 +28,14 @@ class MenuController(object):
 
     @staticmethod
     def menu_2(*params):
-        res = requests.get(params[1], headers=HEADERS)
-        img = np.array(Image.open(BytesIO(res.content)))
+        img = Executelambda("URL", params[1])
         gray = Executelambda("gray_scale", img)
-        plt.imshow(Image.fromarray(gray))
+        plt.imshow(Executelambda("IMAGE_FROM_ARRAY", gray))
         plt.show()
 
     @staticmethod
     def menu_3(*params):
-        res = requests.get(params[1], headers=HEADERS)
-        img = np.array(Image.open(BytesIO(res.content)))
+        img = Executelambda("URL", params[1])
         edges = cv.Canny(img, 100, 200)
         print(f"image type: {type(img)}")
         plt.subplot(121), plt.imshow(img, cmap='gray')
@@ -48,8 +46,7 @@ class MenuController(object):
 
     @staticmethod
     def menu_4(*params):
-        res = requests.get(params[1], headers=HEADERS)
-        img = np.array(Image.open(BytesIO(res.content)))
+        img = Executelambda("URL", params[1])
         edges = cv.Canny(img, 100, 200)
         lines = cv.HoughLinesP(edges, 1, np.pi / 180., 120, minLineLength=50, maxLineGap=5)
         dst = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
@@ -69,13 +66,12 @@ class MenuController(object):
 
         # 오리지널 사진
         dt = Dataset()
-        girl = params[2]
-        girl = image_read(girl)
+        girl = Executelambda("IMAGE_READ-PLT", params[2])
         plt.subplot(151), plt.imshow(Image.fromarray(girl))
         plt.title('Original'), plt.xticks([]), plt.yticks([])
 
         # 회색 사진
-        girl_gray = gray_scale(girl)
+        girl_gray = Executelambda("gray_scale", girl)
         plt.subplot(152), plt.imshow(Image.fromarray(girl_gray))
         plt.title('Gray'), plt.xticks([]), plt.yticks([])
 
