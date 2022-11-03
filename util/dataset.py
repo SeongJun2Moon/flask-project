@@ -16,7 +16,7 @@ class Dataset(object):
     def context(self): return self._context
 
     @context.setter
-    def context(self, context): self._context = context
+    def context(self, context): self._context = "./data/"
 
     @property
     def fname(self): return self._fname
