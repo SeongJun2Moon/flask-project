@@ -59,9 +59,9 @@ class MenuController(object):
     @staticmethod
     def menu_5(*params):
         print(params[0])
-        cat = cv.imread(f"{Dataset().context}{params[1]}")
+        cat = cv.imread(f"{CTX}{params[1]}")
         mos = mosaic(cat, 100)
-        cv.imwrite(f'{Dataset().context}cat-mosaic.png', mos)
+        cv.imwrite(f'{CTX}cat-mosaic.png', mos)
         cv.imshow('CAT MOSAIC', mos)
         cv.waitKey(0)
         cv.destroyAllWindows()
@@ -92,15 +92,15 @@ class MenuController(object):
         plt.title('Hough'), plt.xticks([]), plt.yticks([])
 
         # 하르
-        Haar(girl)
-        # haar = cv.CascadeClassifier(CTX + params[1])
-        # face = haar.detectMultiScale(girl, minSize=(150, 150)) # 스퀘어 좌표설정
-        # if len(face) == 0:
-        #     print("얼굴인식 실패")
-        #     quit()
-        # for (x, y, w, h) in face:
-        #     # print(f"얼굴 좌표 : {x},{y},{w},{h}")
-        #     cv.rectangle(girl, (x, y), (x + w, y + h), (255, 0, 0), thickness=10)
+        # Haar(girl)
+        haar = cv.CascadeClassifier(CTX + params[1])
+        face = haar.detectMultiScale(girl, minSize=(150, 150)) # 스퀘어 좌표설정
+        if len(face) == 0:
+            print("얼굴인식 실패")
+            quit()
+        for (x, y, w, h) in face:
+            # print(f"얼굴 좌표 : {x},{y},{w},{h}")
+            cv.rectangle(girl, (x, y), (x + w, y + h), (255, 0, 0), thickness=10)
         plt.subplot(235), plt.imshow(girl, cmap='gray')
         plt.title('Harr'), plt.xticks([]), plt.yticks([])
 
