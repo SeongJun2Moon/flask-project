@@ -1,3 +1,4 @@
+import copy
 from io import BytesIO
 import numpy as np
 import requests
@@ -5,11 +6,11 @@ from PIL import Image
 import matplotlib.pyplot as plt
 from const.crawler import HEADERS
 import cv2 as cv
+from const.path import HAAR, CTX
 
 from util.dataset import Dataset
 
-
-def Executelambda(*params):
+def Lambdas(*params):
     cmd = params[0]
     target = params[1]
     ds = Dataset()
@@ -26,6 +27,7 @@ def Executelambda(*params):
     elif cmd == "IMAGE_FROM_ARRAY":
         return (lambda x : Image.fromarray(x))(target)
 
+
 def Hough(edges):
     lines = cv.HoughLinesP(edges, 1, np.pi / 180., 120, minLineLength=50, maxLineGap=5)
     dst = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
@@ -33,22 +35,39 @@ def Hough(edges):
         for i in range(lines.shape[0]):
             pt1 = (lines[i][0][0], lines[i][0][1])
             pt2 = (lines[i][0][2], lines[i][0][3])
-            cv.line(dst, pt1, pt2, (255, 0, 0), 2, cv.LINE_AA)
+            cv.line(dst, pt1, pt2, (0, 255, 0), 2, cv.LINE_AA)
     return dst
 
 
+def Haar(img):
+    dst = img.copy()
+    haar = cv.CascadeClassifier(CTX + HAAR)
+    face = haar.detectMultiScale(dst, minSize=(150, 150))  # 스퀘어 좌표설정
+    if len(face) == 0:
+        print("얼굴인식 실패")
+        quit()
+    for (x, y, w, h) in face:
+        # print(f"얼굴 좌표 : {x},{y},{w},{h}")
+        cv.rectangle(dst, (x, y), (x + w, y + h), (255, 0, 0), thickness=10)
 
-def Mos(img, rect, size):
-    (x1, y1, x2, y2) = rect  # 앵글이 필요 => Harr 사용할 거
-    w = x2 - x1
-    h = y2 - y1
-    i_rect = img[y1:y2, x1:x2]
-    i_small = cv.resize(i_rect, (size, size))
-    i_mos = cv.resize(i_small, (w, h), interpolation=cv.INTER_AREA)
-    img2 = img.copy()
-    img2[y1:y2, x1:x2] = i_mos
-    return img2
 
+def mosaic(img, size):
+    dst = img.copy()
+    haar = cv.CascadeClassifier(CTX + HAAR)
+    face = haar.detectMultiScale(dst, minSize=(150, 150))  # 스퀘어 좌표설정
+    for (x, y, w, h) in face:
+        (x1, y1, x2, y2) = (x, y, (x+w), (y+h))  # 앵글이 필요 => Harr 사용할 거
+        w = x2 - x1
+        h = y2 - y1
+        i_rect = img[y1:y2, x1:x2]
+        i_small = cv.resize(i_rect, (size, size))
+        i_mos = cv.resize(i_small, (w, h), interpolation=cv.INTER_AREA)
+        dst[y1:y2, x1:x2] = i_mos
+    return dst
+
+
+if __name__ == '__main__':
+    print(type(mosaic()))
 
 #
 #

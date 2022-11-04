@@ -2,12 +2,12 @@ from matplotlib import pyplot as plt
 from PIL import Image
 import cv2 as cv
 import numpy as np
+import copy
+from const.path import CTX
+from mosaic.services import Hough, Haar, mosaic
 
-from canny.survices import Executelambda, Hough, Mos
-import requests
-from io import BytesIO
-from const.crawler import HEADERS
 from util.dataset import Dataset
+from util.lambdas import MosaicLambda
 
 
 class MenuController(object):
@@ -18,7 +18,7 @@ class MenuController(object):
     @staticmethod
     def menu_1(*params):
         print(params[0])
-        img = Executelambda("IMAGE_READ-CV", params[1])
+        img = MosaicLambda("IMAGE_READ-CV", params[1])
         print(f'cv2 버전 {cv.__version__}')  # cv2 버전 4.6.0
         print(f' Shape is {img.shape}')
         cv.imshow('Gray', img)
@@ -28,14 +28,14 @@ class MenuController(object):
 
     @staticmethod
     def menu_2(*params):
-        img = Executelambda("URL", params[1])
-        gray = Executelambda("gray_scale", img)
-        plt.imshow(Executelambda("IMAGE_FROM_ARRAY", gray))
+        img = MosaicLambda("URL", params[1])
+        gray = MosaicLambda("gray_scale", img)
+        plt.imshow(MosaicLambda("IMAGE_FROM_ARRAY", gray))
         plt.show()
 
     @staticmethod
     def menu_3(*params):
-        img = Executelambda("URL", params[1])
+        img = MosaicLambda("URL", params[1])
         edges = cv.Canny(img, 100, 200)
         print(f"image type: {type(img)}")
         plt.subplot(121), plt.imshow(img, cmap='gray')
@@ -46,7 +46,7 @@ class MenuController(object):
 
     @staticmethod
     def menu_4(*params):
-        img = Executelambda("URL", params[1])
+        img = MosaicLambda("URL", params[1])
         edges = cv.Canny(img, 100, 200)
         dst = Hough(edges)
         plt.subplot(121), plt.imshow(edges, cmap='gray')
@@ -55,67 +55,70 @@ class MenuController(object):
         plt.title('Canny'), plt.xticks([]), plt.yticks([])
         plt.show()
 
+
     @staticmethod
     def menu_5(*params):
-
-        # 오리지널 사진
-        dt = Dataset()
-        girl = Executelambda("IMAGE_READ-PLT", params[2])
-        plt.subplot(231), plt.imshow(Image.fromarray(girl))
-        plt.title('Original'), plt.xticks([]), plt.yticks([])
-
-        # 회색 사진
-        girl_gray = Executelambda("gray_scale", girl)
-        plt.subplot(232), plt.imshow(Image.fromarray(girl_gray))
-        plt.title('Gray'), plt.xticks([]), plt.yticks([])
-
-        # 엣지 사진
-        edges = cv.Canny(girl, 10, 100)
-        plt.subplot(233), plt.imshow(edges, cmap='gray')
-        plt.title('Edge'), plt.xticks([]), plt.yticks([])
-
-        # 라인 사진
-        dst = Hough(edges)
-        plt.subplot(234), plt.imshow(dst, cmap='gray')
-        plt.title('Line'), plt.xticks([]), plt.yticks([])
-
-        # 하르 사진
-        haar = cv.CascadeClassifier(dt.context + params[1])
-        face = haar.detectMultiScale(girl, minSize=(150, 150))
-        if len(face) == 0:
-            print("얼굴인식 실패")
-            quit()
-        for (x, y, w, h) in face:
-            print(f"얼굴 좌표 : {x},{y},{w},{h}")
-            red = (255, 0, 0)
-            cv.rectangle(girl, (x, y), (x + w, y + h), red, thickness=10)
-        plt.subplot(235), plt.imshow(girl, cmap='gray')
-        plt.title('Harr'), plt.xticks([]), plt.yticks([])
-
-        # 모자이크
-        girl2 = Executelambda("IMAGE_READ-PLT", params[2])
-        ls = list(face)
-        rect = (ls[0][0], ls[0][1], ls[0][2]+ls[0][0], ls[0][3]+ls[0][1])
-        mos = Mos(girl2, rect, 10)
-        plt.subplot(236), plt.imshow(mos, cmap='gray')
-        plt.title('Mos'), plt.xticks([]), plt.yticks([])
-
-        print(type(girl))
-
-        plt.show()
-
-
-
-
-    @staticmethod
-    def menu_6(*param):
-        print(param[0])
-        cat = cv.imread(f"{Dataset().context}{param[1]}")
-        mos = Mos(cat, (150, 150, 450, 450), 10)
+        print(params[0])
+        cat = cv.imread(f"{Dataset().context}{params[1]}")
+        mos = mosaic(cat, 100)
         cv.imwrite(f'{Dataset().context}cat-mosaic.png', mos)
         cv.imshow('CAT MOSAIC', mos)
         cv.waitKey(0)
         cv.destroyAllWindows()
+
+
+    @staticmethod
+    def menu_6(*params):
+
+        # 오리지널
+        girl = MosaicLambda("IMAGE_READ-PLT", params[2])
+        plt.subplot(231), plt.imshow(Image.fromarray(girl))
+        plt.title('Original'), plt.xticks([]), plt.yticks([])
+        girl2 = copy.deepcopy(girl)  # 모자이크에서 쓸 애
+
+        # 그레이
+        girl_gray = MosaicLambda("gray_scale", girl)
+        plt.subplot(232), plt.imshow(Image.fromarray(girl_gray))
+        plt.title('Gray'), plt.xticks([]), plt.yticks([])
+
+        # 엣지
+        edges = cv.Canny(girl, 10, 30)
+        plt.subplot(233), plt.imshow(edges, cmap='gray')
+        plt.title('Edge'), plt.xticks([]), plt.yticks([])
+
+        # 허프
+        dst = Hough(edges)
+        plt.subplot(234), plt.imshow(dst, cmap='gray')
+        plt.title('Hough'), plt.xticks([]), plt.yticks([])
+
+        # 하르
+        Haar(girl)
+        # haar = cv.CascadeClassifier(CTX + params[1])
+        # face = haar.detectMultiScale(girl, minSize=(150, 150)) # 스퀘어 좌표설정
+        # if len(face) == 0:
+        #     print("얼굴인식 실패")
+        #     quit()
+        # for (x, y, w, h) in face:
+        #     # print(f"얼굴 좌표 : {x},{y},{w},{h}")
+        #     cv.rectangle(girl, (x, y), (x + w, y + h), (255, 0, 0), thickness=10)
+        plt.subplot(235), plt.imshow(girl, cmap='gray')
+        plt.title('Harr'), plt.xticks([]), plt.yticks([])
+
+        # 모자이크
+        mos = mosaic(girl2, 10)
+        plt.subplot(236), plt.imshow(mos, cmap='gray')
+        plt.title('Mos'), plt.xticks([]), plt.yticks([])
+
+        plt.show()
+
+    @staticmethod
+    def menu_7(*params):
+        print(params[0])
+        photo = MosaicLambda("IMAGE_READ-PLT", params[2])
+        mos = mosaic(photo, 10)
+        plt.imshow(Image.fromarray(mos))
+        plt.show()
+
 
 # if __name__ == '__main__':
 #     print(MenuController.menu_5())
