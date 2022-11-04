@@ -3,7 +3,7 @@ from PIL import Image
 import cv2 as cv
 import numpy as np
 
-from canny.models import Executelambda, Hough, Harr
+from canny.survices import Executelambda, Hough, Mos
 import requests
 from io import BytesIO
 from const.crawler import HEADERS
@@ -61,33 +61,61 @@ class MenuController(object):
         # 오리지널 사진
         dt = Dataset()
         girl = Executelambda("IMAGE_READ-PLT", params[2])
-        plt.subplot(151), plt.imshow(Image.fromarray(girl))
+        plt.subplot(231), plt.imshow(Image.fromarray(girl))
         plt.title('Original'), plt.xticks([]), plt.yticks([])
 
         # 회색 사진
         girl_gray = Executelambda("gray_scale", girl)
-        plt.subplot(152), plt.imshow(Image.fromarray(girl_gray))
+        plt.subplot(232), plt.imshow(Image.fromarray(girl_gray))
         plt.title('Gray'), plt.xticks([]), plt.yticks([])
 
         # 엣지 사진
         edges = cv.Canny(girl, 10, 100)
-        plt.subplot(153), plt.imshow(edges, cmap='gray')
+        plt.subplot(233), plt.imshow(edges, cmap='gray')
         plt.title('Edge'), plt.xticks([]), plt.yticks([])
 
         # 라인 사진
         dst = Hough(edges)
-        plt.subplot(154), plt.imshow(dst, cmap='gray')
+        plt.subplot(234), plt.imshow(dst, cmap='gray')
         plt.title('Line'), plt.xticks([]), plt.yticks([])
 
         # 하르 사진
-        Harr(dt, girl, params)
-        plt.subplot(155), plt.imshow(girl, cmap='gray')
+        haar = cv.CascadeClassifier(dt.context + params[1])
+        face = haar.detectMultiScale(girl, minSize=(150, 150))
+        if len(face) == 0:
+            print("얼굴인식 실패")
+            quit()
+        for (x, y, w, h) in face:
+            print(f"얼굴 좌표 : {x},{y},{w},{h}")
+            red = (255, 0, 0)
+            cv.rectangle(girl, (x, y), (x + w, y + h), red, thickness=10)
+        plt.subplot(235), plt.imshow(girl, cmap='gray')
         plt.title('Harr'), plt.xticks([]), plt.yticks([])
+
+        # 모자이크
+        girl2 = Executelambda("IMAGE_READ-PLT", params[2])
+        ls = list(face)
+        rect = (ls[0][0], ls[0][1], ls[0][2]+ls[0][0], ls[0][3]+ls[0][1])
+        mos = Mos(girl2, rect, 10)
+        plt.subplot(236), plt.imshow(mos, cmap='gray')
+        plt.title('Mos'), plt.xticks([]), plt.yticks([])
+
+        print(type(girl))
 
         plt.show()
 
 
 
+
     @staticmethod
-    def menu_6(*params):
-        pass
+    def menu_6(*param):
+        print(param[0])
+        cat = cv.imread(f"{Dataset().context}{param[1]}")
+        mos = Mos(cat, (150, 150, 450, 450), 10)
+        cv.imwrite(f'{Dataset().context}cat-mosaic.png', mos)
+        cv.imshow('CAT MOSAIC', mos)
+        cv.waitKey(0)
+        cv.destroyAllWindows()
+
+# if __name__ == '__main__':
+#     print(MenuController.menu_5())

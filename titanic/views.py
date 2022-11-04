@@ -1,6 +1,6 @@
 from titanic.models import TitanicModel
 from util.dataset import Dataset
-from canny.models import CannyModel
+from canny.survices import CannyModel
 
 class TitanicController(object):
     def __init__(self):

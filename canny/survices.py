@@ -37,16 +37,22 @@ def Hough(edges):
     return dst
 
 
-def Harr(dt, girl, params):
-    haar = cv.CascadeClassifier(dt.context + params[1])
-    face = haar.detectMultiScale(girl, minSize=(150, 150))
-    if len(face) == 0:
-        print("얼굴인식 실패")
-        quit()
-    for (x, y, w, h) in face:
-        print(f"얼굴 좌표 : {x},{y},{w},{h}")
-        red = (255, 0, 0)
-        cv.rectangle(girl, (x, y), (x + w, y + h), red, thickness=10)
+
+def Mos(img, rect, size):
+    (x1, y1, x2, y2) = rect  # 앵글이 필요 => Harr 사용할 거
+    w = x2 - x1
+    h = y2 - y1
+    i_rect = img[y1:y2, x1:x2]
+    i_small = cv.resize(i_rect, (size, size))
+    i_mos = cv.resize(i_small, (w, h), interpolation=cv.INTER_AREA)
+    img2 = img.copy()
+    img2[y1:y2, x1:x2] = i_mos
+    return img2
+
+
+#
+#
+#
 # class LennaModel(object):
 #
 #     def __init__(self):
@@ -251,3 +257,4 @@ def Harr(dt, girl, params):
     # img = Canny(img, 50, 150).get()
     # imshow(img)
     # CannyModel().get()
+
