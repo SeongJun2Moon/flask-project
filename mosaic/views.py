@@ -81,33 +81,25 @@ class MenuController(object):
         plt.subplot(232), plt.imshow(Image.fromarray(girl_gray))
         plt.title('Gray'), plt.xticks([]), plt.yticks([])
 
-        # 엣지
-        edges = cv.Canny(girl, 10, 30)
-        plt.subplot(233), plt.imshow(edges, cmap='gray')
-        plt.title('Edge'), plt.xticks([]), plt.yticks([])
+        # 케니
+        girl_edges = cv.Canny(girl, 30, 31)
+        plt.subplot(233), plt.imshow(girl_edges, cmap='gray')
+        plt.title('Canny'), plt.xticks([]), plt.yticks([])
 
         # 허프
-        dst = Hough(edges)
-        plt.subplot(234), plt.imshow(dst, cmap='gray')
+        girl_hough = Hough(girl_edges)
+        plt.subplot(234), plt.imshow(girl_hough, cmap='gray')
         plt.title('Hough'), plt.xticks([]), plt.yticks([])
 
         # 하르
-        # Haar(girl)
-        haar = cv.CascadeClassifier(CTX + params[1])
-        face = haar.detectMultiScale(girl, minSize=(150, 150)) # 스퀘어 좌표설정
-        if len(face) == 0:
-            print("얼굴인식 실패")
-            quit()
-        for (x, y, w, h) in face:
-            # print(f"얼굴 좌표 : {x},{y},{w},{h}")
-            cv.rectangle(girl, (x, y), (x + w, y + h), (255, 0, 0), thickness=10)
-        plt.subplot(235), plt.imshow(girl, cmap='gray')
+        girl_haar = Haar(girl)
+        plt.subplot(235), plt.imshow(girl_haar, cmap='gray')
         plt.title('Harr'), plt.xticks([]), plt.yticks([])
 
         # 모자이크
-        mos = mosaic(girl2, 10)
-        plt.subplot(236), plt.imshow(mos, cmap='gray')
-        plt.title('Mos'), plt.xticks([]), plt.yticks([])
+        girl_mosic = mosaic(girl2, 10)
+        plt.subplot(236), plt.imshow(girl_mosic, cmap='gray')
+        plt.title('Mosic'), plt.xticks([]), plt.yticks([])
 
         plt.show()
 

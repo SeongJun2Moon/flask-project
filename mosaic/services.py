@@ -49,6 +49,7 @@ def Haar(img):
     for (x, y, w, h) in face:
         # print(f"얼굴 좌표 : {x},{y},{w},{h}")
         cv.rectangle(dst, (x, y), (x + w, y + h), (255, 0, 0), thickness=10)
+    return dst
 
 
 def mosaic(img, size):
