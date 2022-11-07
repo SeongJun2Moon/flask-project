@@ -9,8 +9,7 @@ class MenuController(object):
 
     @staticmethod
     def menu_1(arg):
-        bugs = BugsMusic(arg)
-        bugs.scrap()
+        BugsMusic(arg)
 
     @staticmethod
     def menu_2(arg):
