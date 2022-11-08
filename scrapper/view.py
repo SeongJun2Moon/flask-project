@@ -1,7 +1,8 @@
-from scrapper.domains import BugsMusic, MelonMusic
+# from scrapper.domains import MelonMusic
+from scrapper.services import BugsMusic, MelonMusic
 
 
-class MenuController(object):
+class ScrapController(object):
 
     @staticmethod
     def menu_0():
@@ -9,9 +10,10 @@ class MenuController(object):
 
     @staticmethod
     def menu_1(arg):
+        print("벅스")
         BugsMusic(arg)
 
     @staticmethod
     def menu_2(arg):
-        melon = MelonMusic(arg)
-        melon.scrap()
+        print("멜론")
+        MelonMusic(arg)

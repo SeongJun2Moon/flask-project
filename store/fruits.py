@@ -1,57 +1,22 @@
-"""
-과일판매상에서 메뉴를 진열하는 어플을 제작하고자 한다.
-입력되는 값은 없다.
-다만, 실행했을 때 출력되는 결과는 다음과 같다.
-### 과일번호표 ###
-********************************
-1번과일: 바나나
-2번과일: 사과
-3번과일: 망고
-********************************
-구매할 과일: 바
-"""
-from util.common import Common
+import pandas as pd
 
 
-class Fruits(object):
-    def __init__(self, name, amount) -> None:
-        self.name = name
-        self.amount = amount
+def new_fruites_df():
+    dc = {}
+    ls_schema = ['제품', '가격', '판매량']
+    l1 = ["사과", "딸기", "수박"]
+    l2 = [1800, 1500, 3000]
+    l3 = [24, 38, 13]
+    ls_apd = [l1, l2, l3]
 
-    def __str__(self):
-        return f"{self.name} {self.amount}"
+    dc = {j : ls_apd[i] for i,j in enumerate(ls_schema)}
 
-    @staticmethod
-    def new_fruit():
-        name = input("과일 이름: ")
-        amount = int(input("과일 수량: "))
-        return Fruits(name, amount)
+    df = pd.DataFrame(dc)
 
-    @staticmethod
-    def print_fruits(ls):
-        print("### 과일들 ###\n******************************\n과일 수량\n******************************")
-        [print(i) for i in ls]
-        print("******************************")
+    return df
 
-    @staticmethod
-    def delete_fruit(ls, name):
-        del ls[[i for i,j in enumerate(ls) if name == j.name][0]]
-
-    @staticmethod
-    def main():
-        ls = []
-        while True:
-            menu = Common.print_menu("과일")
-            if menu == 1:
-                ls.append(Fruits.new_fruit())
-            elif menu == 2:
-                Fruits.print_fruits(ls)
-            elif menu == 3:
-                Fruits.delete_fruit(ls, input("삭제할 과일: "))
-            elif menu == 4:
-                print("종료")
-                break
-            else: print("그런거 없음")
-
-Fruits.main()
-
+if __name__ == '__main__':
+    df = new_fruites_df()
+    print(f"{df}\n")
+    print(f"가격 평균: {sum(df['가격'])/len(df['가격'])}원")
+    print(f"판매량 평균: {int(df['판매량'].mean())}개")

@@ -22,21 +22,13 @@ class BugsMusic: # 함수형이 아닌 객체지향형으로 만든 건 db에 �
         self.url = url
 
     def scrap(self): # 정석
-        arg = MusicRanking()
         soup = BeautifulSoup(urlopen(self.url), "lxml")
-        title = {"class" : arg.class_names[0]}
-        artist = {"class" : arg.class_names[1]}
+        title = {"class" : "title"}
+        artist = {"class" : "artist"}
         titles = soup.find_all(name="p", attrs=title)
         artists = soup.find_all(name="p", attrs=artist)
-        # 디버깅
         [print(f"{i+1} {titles[i].find('a').text} {j.find('a').text}\n") for i,j in zip(range(len(titles)),artists)]
-        # dict 파일로 변환
-        for i in range(0, len(titles)):
-            arg.dic[arg.titles[i]] = arg.artists[i]
 
-        # csv 파일로 저장
-        arg.dict_to_dataframe()
-        arg.df_to_csv()
 
 class MelonMusic:
 
@@ -51,19 +43,19 @@ class MelonMusic:
         [print(f"{i+1} {titles[i].find('a').text} {j.find('a').text}\n") for i,j in zip(range(len(titles)),artists)]
 
 @dataclass
-class MusicRanking:
-    html : str
-    parser : str
-    domain : str
-    query_string : str
-    headers : dict
-    tag_name : str
-    fname : str
-    class_names : []
-    artists : []
-    titles : []
-    diction : {}
-    df : None
+class Scrap:
+    html = ""
+    parser = ""
+    domain = ""
+    query_string = ""
+    headers = ""
+    tag_name = ""
+    fname = ""
+    class_names = []
+    artists = []
+    titles = []
+    diction = {}
+    df = None
     soup : BeautifulSoup
 
     @property
@@ -133,12 +125,9 @@ class MusicRanking:
     def df(self, df): self._df = df
 
     def dict_to_dataframe(self):
-        print("^" * 10)
         print(len(self.diction))
         self.df = pd.DataFrame.from_dict(self.diction, orient='index')
-        print("*"*10)
-        print(self.df)
 
     def dataframe_to_csv(self):
         path = './save/result.csv'
-        self.df.to_csv(path, sep=',', na_rep="NaN")
+        self.df.to_csv(path, sep=',', na_rep="NaN", header=None)
