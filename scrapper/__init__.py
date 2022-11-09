@@ -20,10 +20,10 @@ if __name__ == '__main__':
             api.menu_1(scrap)
         elif menu == "2":
             scrap.domain = "https://www.melon.com/chart/index.htm"
-            scrap.query_string = "?dayTime=2022110802"
+            scrap.query_string = "?dayTime=2022110909"
             scrap.parser = "lxml"
             scrap.class_names = ["rank01", "rank02"]
             scrap.tag_name = 'div'
-            api.menu_1(scrap)
+            api.menu_2(scrap)
         else:
             print(" ### 해당 메뉴 없음 ### ")
