@@ -18,7 +18,7 @@ class Mid:
 
     def mid_features(self):
         mid = self.mid
-        return f"{mid.head()}\n{mid.tail()}\n{mid.shape}\n{mid.info()}\n{mid.describe()}"
+        print(f"{mid.head()}\n{mid.tail()}\n{mid.shape}\n{mid.info()}\n{mid.describe()}")
 
     def change_columns(self):
         self.mid_rename = self.mid.rename(columns = {"poptotal" : "total", "popasian" : "asian"})
@@ -51,7 +51,7 @@ if __name__ == '__main__':
             print("종료")
             quit()
         elif menu == "1":
-            print(mid.mid_features())
+            mid.mid_features()
         elif menu == "2":
             mid.change_columns()
         elif menu == "3":
