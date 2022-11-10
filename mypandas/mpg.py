@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import dataframe_image as dfi
+from matplotlib import pyplot as plt
 
 my_meta = {
     "manufacturer": "회사",
@@ -41,6 +42,7 @@ class Mpg:
     def __init__(self):
         self.mpg = MPG
         self.mpg_test = None
+        self.chart = None
 
     def head(self): #1
         print(self.mpg.head())
@@ -66,18 +68,21 @@ class Mpg:
     def create_test(self): #8
         self.change_meta()
         t = self.mpg_test
-        t["total"] = (t['cty'] + t['hwy']) / 2
-        t['test'] = np.where(t['total'] >= 20, "pass", "fail")
+        t["종합연비"] = (t['시내연비'] + t['시외연비']) / 2
+        t['연비테스트'] = np.where(t['종합연비'] >= 20, "pass", "fail")
         self.mpg_test = t
 
     def create_test_frequency(self): #9
         self.create_test()
         t = self.mpg_test
-        count_test = t['test'].value_counts()
-        print(count_test)
+        count_test = t['연비테스트'].value_counts()
+        self.chart = count_test
 
     def create_test_grape(self): # 10
-        pass
+        self.create_test_frequency()
+        chart = self.chart
+        chart.plot.bar(rot = 0)
+        plt.savefig('./save/mpg_graph.png')
 
     def displ_hwy(self): #11
         self.create_test()
@@ -104,11 +109,13 @@ class Mpg:
         print(self.mpg_test.query("회사 == 'audi'").sort_values('시외연비').head())
 
     def hwy_avg(self):
-        self.change_meta()
-        print(self.mpg_test.sort_values())
+        self.create_test()
+        chart = self.mpg_test
+        print(chart.sort_values("종합연비", ascending=False).head(3))
+
 
 if __name__ == '__main__':
-
+    t = Mpg()
     while True:
         [print(f"{i}:{j}") for i, j in enumerate(MENUS)]
         menu = input("메뉴 선택: ")
@@ -118,49 +125,49 @@ if __name__ == '__main__':
             quit()
         elif menu == "1":
             print("앞부분 확인")
-            Mpg().head()
+            t.head()
         elif menu == "2":
             print("뒷부분 확인")
-            Mpg().tail()
+            t.tail()
         elif menu == "3":
             print("행열출력")
-            Mpg().shape()
+            t.shape()
         elif menu == "4":
             print("데이터속성 확인")
-            Mpg().info()
+            t.info()
         elif menu == "5":
             print("요약 통계량 출력")
-            Mpg().describe()
+            t.describe()
         elif menu == "6":
             print("문자 변수 요약 통계량 함께 출력")
-            Mpg().describe2()
+            t.describe2()
         elif menu == "7":
             print("manufacturer 를 company 로 변경")
-            Mpg().change_meta()
+            t.change_meta()
         elif menu == "8":
             print("test 변수 생성")
-            Mpg().create_test()
+            t.create_test()
         elif menu == "9":
             print("test 빈도표 만들기")
-            # count_test = mpg['test'].value_counts()
-            Mpg().create_test_frequency()
+            t.create_test_frequency()
         elif menu == "10":
             print("test 빈도 막대 그래프 그리기")
+            t.create_test_grape()
         elif menu == "11":
-            Mpg().displ_hwy()
+            t.displ_hwy()
         elif menu == "12":
             print("\n아우디와 토요타 중 도시연비(cty) 평균이 높은 회사 검색")
-            Mpg().audi_toyota()
+            t.audi_toyota()
         elif menu == "13":
             print("\n쉐보레, 포드, 혼다 데이터 출력과 hwy 전체 평균")
-            Mpg().car3()
+            t.car3()
         elif menu == "14":
             print("\nsuv / 컴팩 자동차 중 어떤 자동차의 도시연비 평균이 더 높은가?\n")
-            Mpg().suv_compact()
+            t.suv_compact()
         elif menu == "15":
             print("\n아우디차에서 고속도로 연비 1~5위 출력하시오")
-            Mpg().audi_hwy()
+            t.audi_hwy()
         elif menu == "16":
-
+            t.hwy_avg()
             print("\n평균연비가 가장 높은 자동차 1~3위 출력하시오")
 
