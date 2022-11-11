@@ -1,3 +1,9 @@
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
+
+
+from titanic.models import TitanicModel
 from titanic.template import Plot
 from titanic.views import TitanicController
 from util.common import Common
@@ -21,7 +27,14 @@ if __name__ == '__main__':
             df = api.modeling('train.csv', 'test.csv')
         elif menu == "3":
             print(" ### 머신러닝 ### ")
-            df = api.learning('train.csv', 'test.csv')
+            api.learning('train.csv', 'test.csv', [RandomForestClassifier(),
+                                                   DecisionTreeClassifier(),
+                                                   LogisticRegression()])
+            # 랜덤 포레스트 분류기 83.05%
+            # 결정트리분류기: 81.82 %
+            # 로지스틱회귀: 77.89 %
+            # 서포트벡터머신: ? %
+
         elif menu == "4":
             print(" ### 배포 ### ")
             df = api.submit('train.csv', 'test.csv')
