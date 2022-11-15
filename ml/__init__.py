@@ -1,5 +1,8 @@
 from ml.stroke import STROKE_MENUS, stroke_menu
 from ml.stroke import StrokeService
+from ml.oklahoma import okl_MENUS, okl_meta, okl_menu, Oklahoma
+
+
 def my_menu(ls):
     for i, j in enumerate(ls):
         print(f"{i}. {j}")
@@ -21,7 +24,9 @@ if __name__ == '__main__':
         elif menu == '4':
             t.interval_variables()
         elif menu == '5':
-            t.categorical_variables()
+            t.nominal_variables()
+        elif menu == '6':
+            t.sampling()
         else:
             try:
                 stroke_menu[menu](t)

@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+from imblearn.under_sampling import RandomUnderSampler
+from sklearn.model_selection import train_test_split
 
 
 '''
@@ -25,14 +27,15 @@ memory usage: 479.2+ KB
 
 '''
 
-STROKE_MENUS = ["종료", #0
-                "데이터구하기",#1
-                "타깃변수설정",#2
-                "데이터처리",#3
-                "시각화",#4
-                "모델링",#5
-                "학습",#6
-                "예측"]#7
+STROKE_MENUS = ["Exit", #0
+                "spec",#1
+                "Rename",#2
+                "Interval",#3
+                "Norminal",#4
+                "Target",#5
+                "Partition",#6
+                "학습",#7
+                "예측"]#8
 
 stroke_meta = {
     'id' : '아이디',
@@ -52,13 +55,12 @@ stroke_meta = {
 stroke_menu = {
     "1" : lambda t: t.spec(),
     "2" : lambda t: t.rename_meta(),
-    "3" : lambda t: t.visualize(),
-    "4" : lambda t: t.compare_displ(),
-    "5" : lambda t: t.find_high_cty(),
-    "6" : lambda t: t.find_highest_hwy(),
-    "7" : lambda t: t.which_cty_in_suv_compact(),
-    "8" : lambda t: t.find_top5_hwy_in_audi(),
-    "9" : lambda t: t.find_top3_avg(),
+    "3" : lambda t: t.interval_variables(),
+    "4" : lambda t: t.categorical_variables(),
+    "5" : lambda t: t.partition(),
+    "6" : lambda t: print(" ** No Function ** "),
+    "7" : lambda t: print(" ** No Function ** "),
+    "8" : lambda t: print(" ** No Function ** "),
 }
 
 
@@ -134,6 +136,7 @@ class StrokeService:
         c1 = self.adult_stock['평균혈당'] <= 232.64
         c2 = self.adult_stock['비만도'] <= 60.3
         self.adult_stock = self.adult_stock[c1 & c2]
+        print(f'--- 이상치 제거한 성인객체스펙 ---\n{self.adult_stoke.shape}')
 
     def create_adult_stock(self):
         self.rename_meta()
@@ -144,7 +147,7 @@ class StrokeService:
         c2 = self.adult_stock['비만도'] <= 60.3
         self.adult_stock = self.adult_stock[c1 & c2]
 
-    def categorical_variables(self):
+    def nominal_variables(self):
         self.create_adult_stock()
         df = self.adult_stock
         category = ['성별', '심장병', '기혼여부', '직종', '거주형태', '흡연여부', '고혈압']
@@ -155,10 +158,26 @@ class StrokeService:
         self.stroke = df
         self.spec()
         print(" ### 프리프로세스 종료 ### ")
+        self.stroke.to_csv("./save/stroke.csv")
 
+    def ordinal_variables(self):
+        pass
 
+    def partition(self):
+        df = pd.read_csv('./save/stroke.csv')
+        data = df.drop(['뇌졸중'], axis=1)
+        target = df['뇌졸중']
+        undersample = RandomUnderSampler(sampling_strategy=0.333, random_state=2)
+        data_under, target_under = undersample.fit_resample(data, target)
+        # print(target_under.value_counts(dropna=True))
+        # print(target_under.value_counts(dropna=True, normalize=True))
 
+        x_train, x_test, y_train, y_test = train_test_split(data_under, target_under, test_size=0.5, random_state=42, stratify=target_under)
 
+        print("x_train shape:", x_train.shape)
+        print("x_test shape:", x_test.shape)
+        print("y_train shape:", y_train.shape)
+        print("y_test shape:", y_test.shape)
 
 
 
