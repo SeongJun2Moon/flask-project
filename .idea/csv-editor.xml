@@ -45,6 +45,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\ml\save\police_pos.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\ml\save\stroke.csv">
           <value>
             <Attribute>

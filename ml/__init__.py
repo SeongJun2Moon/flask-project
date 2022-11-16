@@ -18,7 +18,7 @@ if __name__ == '__main__':
         elif menu == '1':
             t.spec()
         elif menu == '2':
-            t.rename_meta()
+            t.save_police_pos()
         elif menu == '3':
             t.target()
         elif menu == '4':
