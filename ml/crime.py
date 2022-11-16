@@ -28,8 +28,8 @@ class Crime:
     def __init__(self):
         self.crime = pd.read_csv("data/crime_in_seoul.csv")
         self.cctv = pd.read_csv("data/cctv_in_seoul.csv")
-        self.pop = pd.read_excel("data/pop_in_seoul.xls", skiprows=[0, 2])
-
+        self.pop = pd.read_excel("data/pop_in_seoul.xls", skiprows=[0, 2])[["자치구", "합계", "한국인", "등록외국인", "65세이상고령자"]].head(5)
+        self.ls = [self.crime, self.cctv, self.pop]
 
     def spec(self):
         print(" --- 클로저 테스트 ---")
@@ -38,7 +38,7 @@ class Crime:
                                f" --- 3.Info ---\n{x.info()}\n"
                                f" --- 4.Case Top1 ---\n{x.head(3)}\n"
                                f" --- 5.describe ---\n{x.describe()}\n"))(i)
-         for i in [self.crime, self.cctv]]
+         for i in self.ls]
 
     def save_police_pos(self):
         crime = self.crime
@@ -72,9 +72,6 @@ class Crime:
         crime.to_csv("save/police_pos.csv", index=False)
 
 
-    def exel(self):
-        print(self.pop[["자치구", "합계", "한국인", "등록외국인", "65세이상고령자"]])
-
     def ordinal(self):
         pass
 
@@ -91,4 +88,4 @@ class Crime:
         pass
 
 if __name__ == '__main__':
-    Crime().exel()
+    Crime().spec()
