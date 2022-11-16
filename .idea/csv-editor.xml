@@ -3,7 +3,21 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="\ml\data\cctv_in_seoul.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\ml\data\comb32.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\ml\data\crime_in_seoul.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -24,7 +38,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\ml\save\house.csv">
+        <entry key="\ml\save\oklahoma.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

@@ -1,6 +1,6 @@
 from ml.stroke import STROKE_MENUS, stroke_menu
 from ml.stroke import StrokeService
-from ml.oklahoma import okl_MENUS, okl_meta, okl_menu, Oklahoma
+from ml.crime import Crime
 
 
 def my_menu(ls):
@@ -9,7 +9,7 @@ def my_menu(ls):
     return input('메뉴선택: ')
 
 if __name__ == '__main__':
-    t = StrokeService()
+    t = Crime()
     while True:
         menu = my_menu(STROKE_MENUS)
         if menu == '0':
