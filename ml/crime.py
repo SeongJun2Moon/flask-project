@@ -28,6 +28,7 @@ class Crime:
     def __init__(self):
         self.crime = pd.read_csv("data/crime_in_seoul.csv")
         self.cctv = pd.read_csv("data/cctv_in_seoul.csv")
+        self.pop = pd.read_excel("data/pop_in_seoul.xls", skiprows=[0, 2])
 
 
     def spec(self):
@@ -71,6 +72,9 @@ class Crime:
         crime.to_csv("save/police_pos.csv", index=False)
 
 
+    def exel(self):
+        print(self.pop[["자치구", "합계", "한국인", "등록외국인", "65세이상고령자"]])
+
     def ordinal(self):
         pass
 
@@ -87,4 +91,4 @@ class Crime:
         pass
 
 if __name__ == '__main__':
-    Crime().spec()
+    Crime().exel()
