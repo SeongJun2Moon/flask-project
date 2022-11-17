@@ -22,7 +22,7 @@ if __name__ == '__main__':
         elif menu == '3':
             t.save_cctv_pos()
         elif menu == '4':
-            t.interval_variables()
+            t.save_police_norm()
         elif menu == '5':
             t.nominal_variables()
         elif menu == '6':
