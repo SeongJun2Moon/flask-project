@@ -20,7 +20,7 @@ if __name__ == '__main__':
         elif menu == '2':
             t.save_police_pos()
         elif menu == '3':
-            t.target()
+            t.save_cctv_pos()
         elif menu == '4':
             t.interval_variables()
         elif menu == '5':
