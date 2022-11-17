@@ -24,7 +24,7 @@ if __name__ == '__main__':
         elif menu == '4':
             t.save_police_norm()
         elif menu == '5':
-            t.nominal_variables()
+            t.folium_example()
         elif menu == '6':
             t.sampling()
         else:
