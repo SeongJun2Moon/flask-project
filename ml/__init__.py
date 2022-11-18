@@ -24,9 +24,9 @@ if __name__ == '__main__':
         elif menu == '4':
             t.save_police_norm()
         elif menu == '5':
-            t.folium_example()
+            t.save_us_unemployment_map()
         elif menu == '6':
-            t.save_seoul_folium()
+            t.save_seoul_crime_map()
         else:
             try:
                 stroke_menu[menu](t)

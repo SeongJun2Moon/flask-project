@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 import googlemaps
 import numpy as np
 import pandas as pd
@@ -7,7 +9,6 @@ from sklearn.model_selection import train_test_split
 import pickle
 import folium
 import json
-
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
@@ -29,6 +30,62 @@ crime_menu = {
     "6" : lambda t: t.save_seoul_folium(),
     "7" : lambda t: t.partition()
 }
+
+'''
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 5110 entries, 0 to 5109
+Data columns (total 12 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   id                 5110 non-null   int64  
+ 1   gender             5110 non-null   object 
+ 2   age                5110 non-null   float64
+ 3   hypertension       5110 non-null   int64  
+ 4   heart_disease      5110 non-null   int64  
+ 5   ever_married       5110 non-null   object 
+ 6   work_type          5110 non-null   object 
+ 7   Residence_type     5110 non-null   object 
+ 8   avg_glucose_level  5110 non-null   float64
+ 9   bmi                4909 non-null   float64
+ 10  smoking_status     5110 non-null   object 
+ 11  stroke             5110 non-null   int64  
+dtypes: float64(3), int64(4), object(5)
+memory usage: 479.2+ KB
+None
+'''
+
+
+
+@dataclass
+class MyChoroplethVO:
+    geo_data = "",
+    data = object,
+    name = "",
+    columns = [],
+    key_on = "",
+    fill_color = "",
+    fill_opacity = 0.0,
+    line_opacity = 0.0,
+    legend_name = "",
+    bins = None,
+    location = [],
+    zoom_start = 0,
+    save_path = ''
+
+def MyChoroplethService(vo):
+    map = folium.Map(location=vo.location, zoom_start=vo.zoom_start)
+    folium.Choropleth(
+        geo_data=vo.geo_data,
+        data=vo.data,
+        name=vo.name,
+        columns=vo.columns,
+        key_on=vo.key_on,
+        fill_color=vo.fill_color,
+        fill_opacity=vo.fill_opacity,
+        line_opacity=vo.line_opacity,
+        legend_name=vo.legend_name
+    ).add_to(map)
+    map.save(vo.save_path)
 
 
 
@@ -61,6 +118,8 @@ class Crime:
      dtype='object')
     Index(['기관명', '소계', '2013년도 이전', '2014년', '2015년', '2016년'], dtype='object'
     '''
+
+
     def spec(self):
         [(lambda x: print(f"--- 1.Shape ---\n{x.shape}\n"
                           f"--- 2.Features ---\n{x.columns}\n"
@@ -80,7 +139,7 @@ class Crime:
         # print(f"서울시내 경찰서는 총 {len(station_names)} 이다")
         # [print(f"{i}") for i in station_names]
 
-        gmaps = (lambda x: googlemaps.Client(key=x))("")
+        gmaps = (lambda x: googlemaps.Client(key=x))("AIzaSyBgVssF55ids-IGxgRA0jx4-s2_2GoFxF8")
         # print(gmaps.geocode("서울종로경찰서", language='ko'))
 
         # print("API에서 주소추출 시작")
@@ -103,13 +162,11 @@ class Crime:
         # 구와 경찰서의 위치가 다른 경우 수작업
         crime.loc[crime['관서명'] == '혜화서', ['구별']] == '종로구'
         crime.loc[crime['관서명'] == '서부서', ['구별']] == '은평구'
-        crime.loc[crime['관서명'] == '강서서', ['구별']] == '양천구'
         crime.loc[crime['관서명'] == '종암서', ['구별']] == '성북구'
         crime.loc[crime['관서명'] == '방배서', ['구별']] == '서초구'
         crime.loc[crime['관서명'] == '수서서', ['구별']] == '강남구'
         crime.to_pickle("save/police_pos.pkl")
         print(pd.read_pickle("save/police_pos.pkl"))
-
 
     def save_cctv_pos(self):
         cctv = self.cctv
@@ -157,19 +214,16 @@ class Crime:
 
     def save_police_norm(self):
         police_pos = pd.read_pickle("save/police_pos.pkl")
-        # print(police_pos.head(10))
-        # print("/" * 100)
         police = pd.pivot_table(police_pos, index="구별", aggfunc=np.sum)
-        # print(police)
+
         police['살인검거율'] = police['살인 검거'].astype(int) / police['살인 발생'].astype(int) * 100
         police['강도검거율'] = police['강도 검거'].astype(int) / police['강도 발생'].astype(int) * 100
         police['강간검거율'] = police['강간 검거'].astype(int) / police['강간 발생'].astype(int) * 100
         police['절도검거율'] = police['절도 검거'].astype(int) / police['절도 발생'].astype(int) * 100
         police['폭력검거율'] = police['폭력 검거'].astype(int) / police['폭력 발생'].astype(int) * 100
         police.drop(columns={"살인 발생", "강도 발생", "강간 발생", "절도 발생", "폭력 발생"})
-
         for i in self.crime_rate_columns:
-            police.loc[police[i] > 100, 1] = 100
+            police.loc[police[i] > 100, 1] = 100 # 데이터값의 기간 오류로 100을 넘으면 100으로 계산
         police.rename(columns={
             '살인 발생': '살인',
             '강도 발생': '강도',
@@ -194,96 +248,80 @@ class Crime:
         """
 
         police_norm = pd.DataFrame(x_scaled, columns=self.crime_columns, index=police.index)
-        print(police_norm)
         police_norm[self.crime_rate_columns] = police[self.crime_rate_columns]
         police_norm['범죄'] = np.sum(police_norm[self.crime_rate_columns], axis=1)
         police_norm['검거'] = np.sum(police_norm[self.crime_columns], axis=1)
+        # police_norm.reset_index(drop=False, inplace=True)
         police_norm.to_pickle("save/police_norm.pkl")
         print(pd.read_pickle("save/police_norm.pkl"))
 
-    def folium_example(self):
-        us_states = self.us_states
+    def save_us_unemployment_map(self):
+        # url = (
+        #     "https://raw.githubusercontent.com/python-visualization/folium/master/examples/data"
+        # )
+        # geo_data = f"{url}/us-states.json"
+        # state_unemployment = f"{url}/US_Unemployment_Oct2012.csv"
+        mc = MyChoroplethVO()
+        mc.geo_data.to_json("data/us-states2.json")
         us_unemployment = self.us_unemployment
-        url = (
-            "https://raw.githubusercontent.com/python-visualization/folium/master/examples/data"
-        )
-        geo_data = f"{url}/us-states.json"
-        state_unemployment = f"{url}/US_Unemployment_Oct2012.csv"
-        data = pd.read_csv(state_unemployment)
-
-        bins = list(us_unemployment["Unemployment"].quantile([0, 0.25, 0.5, 0.75, 1]))
-
-        map = folium.Map(location=[48, -102], zoom_start=5)
-
-        folium.Choropleth(
-            geo_data=geo_data,
-            data=data,
-            name="choropleth",
-            columns=["State", "Unemployment"],
-            key_on="feature.id",
-            fill_color="YlGn",
-            fill_opacity=0.7,
-            line_opacity=0.5,
-            legend_name='Unemployment Rate (%)',
-            bins=bins,
-            reset=True,
-        ).add_to(map)
-        map.save("save/unemployment.html")
-
-        folium.CircleMarker(
-            location=[45.5215, -122.6261],
-            radius=50,
-            popup="Laurelhurst Park",
-            color="#3186cc",
-            fill=True,
-            fill_color="#3186cc",
-        ).add_to(map)
-
-    def save_seoul_folium(self):
-        geo_data = self.kr_states
-        data = self.create_folium_data()
-        map = folium.Map(location=[37.5502, 126.982], zoom_start=12)
-
-        folium.Choropleth(
-            geo_data=geo_data,
-            data=data,
-            name="choropleth",
-            columns=["State", "Crime Rate"],
-            key_on="feature.id",
-            fill_color="PuRd",
-            fill_opacity=0.7,
-            line_opacity=0.5,
-            legend_name='Crime Rate (%)',
-        ).add_to(map)
-        map.save("save/CrimeRate.html")
+        mc.data = self.us_unemployment
+        mc.name = "choropleth"
+        mc.key_on = ["State", "Unemployment"] # columns??
+        mc.fill_color = "YlGn"
+        mc.fill_opacity = 0.7
+        mc.line_opacity = 0.5
+        mc.legend_name = "Unemployment Rate (%)"
+        mc.bins = list(us_unemployment["Unemployment"].quantile([0, 0.25, 0.5, 0.75, 1]))
+        mc.location = [48, -102]
+        mc.zoom_start = 5
+        mc.save_path = "./save/unemployment.html"
+        MyChoroplethService(mc)
 
 
-    def create_folium_data(self):
-        crime = self.crime
-        police_pos = None
-        police_norm = pd.read_pickle("save/police_pos.pkl")
-        station_names = []
-        for name in crime['관서명']:
-            station_names.append('서울' + str(name[:-1] + '경찰서'))
-        station_addrs = []
-        station_lats = []
-        station_lngs = []
-        gmaps = (lambda x: googlemaps.Client(key=x))("")
-        for name in station_names:
-            t = gmaps.geocode(name, language='ko')
-            station_addrs.append(t[0].get('formatted_address'))
-            t_loc = t[0].get('geometry')
-            station_lats.append(t_loc['location']['lat'])
-            station_lngs.append(t_loc['location']['lng'])
-        police_pos['lat'] = station_lats
-        police_pos['lng'] = station_lngs
+    def save_seoul_crime_map(self):
+        mc = MyChoroplethVO()
+        mc.geo_data = self.kr_states
+        mc.data = self.get_seoul_crime_data()
+        mc.name = "choropleth"
+        mc.columns = ["State", "Crime Rate"]
+        mc.key_on = "feature.id"
+        mc.fill_color = "PuRd"
+        mc.fill_opacity = 0.7
+        mc.line_opacity = 0.2
+        mc.legend_name = "Crime Rate (%)"
+        mc.location = [37.5502, 126.982]
+        mc.zoom_start = 12
+        mc.save_path = "./save/seoul_crime_rate.html"
+        MyChoroplethService(mc)
+
+    def get_seoul_crime_data(self):
+        police_pos = pd.read_pickle("save/police_pos.pkl")
+        police_norm = pd.read_pickle("save/police_norm.pkl")
         temp = police_pos[self.arrest_columns] / police_pos[self.arrest_columns].max()
         police_pos['검거'] = np.sum(temp, axis=1)
-
         return tuple(zip(police_norm['구별'], police_norm['범죄'])) #norm = 정규화(ratio)
 
-    def partition(self):
-        pass
+
+def set_json_from_df(fname):
+    df = pd.read_json(fname)
+    '''
+    ## orient
+    df.to_json()  # default : orient='columns'
+    # Output : '{"name":{"0":"Jack","1":"Ace"},"age":{"0":26,"1":87}}'
+    df.to_json(orient='records')
+    # Output : '[{"name":"Jack","age":26},{"name":"Ace","age":87}]'
+    df.to_json(orient='index')
+    # Output : '{"0":{"name":"Jack","age":26},"1":{"name":"Ace","age":87}}'
+    '''
+    print(df.tail(3))
+    df.drop(df.index[[8,51]], inplace=True)
+    ## json으로 쓰기
+    df.to_json("./save/us-states.json", orient='index')
+
+
+
 
 if __name__ == '__main__':
-    Crime().save_police_norm()
+    set_json_from_df("./data/us-states.json")
+    x = pd.read_json("./save/us-states.json")
+    print(x.tail(1))
