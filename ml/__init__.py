@@ -26,7 +26,7 @@ if __name__ == '__main__':
         elif menu == '5':
             t.folium_example()
         elif menu == '6':
-            t.sampling()
+            t.save_seoul_folium()
         else:
             try:
                 stroke_menu[menu](t)
